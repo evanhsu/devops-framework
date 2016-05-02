@@ -1,0 +1,56 @@
+# {{ ansible_managed }}
+
+<VirtualHost {{ item.ip|default(apache_ip) }}:{% if item.ssl is defined %}{{ apache_ssl_port }}{% else %}{{ apache_port }}{% endif %}>
+	ServerName {{ item.domain }}
+	{% if item.server_alias is defined %}ServerAlias {% for i in item.server_alias %}{{ i + ' ' }}{% endfor %}{% endif %}
+
+	DocumentRoot {{ item.document_root|default(apache_vhosts_base_dir + '/' + item.domain + '/' + 'www') }}
+
+{% if item.ssl is defined %}
+	SSLEngine on
+        SSLCertificateFile    {{ item.tls_cert_file|default(apache2_default_tls_cert_file) }}
+        SSLCertificateKeyFile {{ item.tls_key_file|default(apache2_default_tls_key_file) }}
+        {% if item.tls_bundle_file is defined %}SSLCertificateChainFile {{ item.tls_bundle_file }}{% endif %}
+
+	{% if apache2_sts %}
+	Header always set Strict-Transport-Security "max-age={{ apache2_sts_max_age }}; {% if apache2_sts_subdomains %}includeSubDomains{% endif %}"
+	{% endif %}
+
+	SSLCipherSuite AES256+EECDH:AES256+EDH
+	SSLProtocol All -SSLv2 -SSLv3
+	SSLHonorCipherOrder On
+{% endif %}
+{% if item.php|default(false) %}{% for option in item.php %}
+{{	'php_admin_' + option.type + ' ' + option.name + ' ' + option.value }}
+{% endfor %}{% endif %}
+{% if item.php_fpm|default(false) %}{% if ansible_distribution == "Debian" %}
+	FastCgiExternalServer {{ item.document_root|default(apache_vhosts_base_dir + '/' + item.domain + '/' + 'www') }}/index.php -host {{ item.php_fpm.address }}
+{% else %}
+	ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://{{ item.php_fpm.address + item.document_root|default(apache_vhosts_base_dir + '/' + item.domain + '/' + 'www') }}/$1 connectiontimeout=5 timeout=300
+{% endif %}{% endif %}
+{% if item.redirect is defined %}
+	Redirect {{ item.redirect.type|default(302) }} {{ item.redirect.from }} {{ item.redirect.to }}
+{% endif %}
+
+{% if item.directory|default(true) %}	<Directory {{ item.document_root|default(apache_vhosts_base_dir + '/' + item.domain + '/' + 'www') }}>
+{% if item.php_fpm|default(false) and ansible_distribution == "Debian" %}
+		AddType application/x-httpd-fastphp5 .php
+		Action application/x-httpd-fastphp5 /index.php
+
+{% endif %}
+{% if apache_version.stdout == "2.2" %}
+		Order allow,deny
+		Allow from all
+{% endif %}
+{% if apache_version.stdout == "2.4" %}
+		# new in apache 2.4.3+
+		Require all granted
+{% endif %}
+
+		# Setting aditional options
+		AllowOverride All
+		Options -Indexes
+	</Directory>
+{% endif %}
+</VirtualHost>
+

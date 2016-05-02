@@ -1,0 +1,7 @@
+---
+# handlers file for apache2_vhost
+- name: reload apache
+  service: name={{ apache_service }} state=reloaded
+
+- name: enable vhost 
+  command: a2ensite {{ vhost.config_filename }}

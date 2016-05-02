@@ -1,0 +1,5 @@
+apache_service: "httpd"
+apache_vhosts_conf_dir: "/etc/httpd/vhosts.d"
+apache_vhosts_owner: "apache"
+apache_vhosts_group: "apache"
+

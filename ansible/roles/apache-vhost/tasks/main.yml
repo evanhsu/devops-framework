@@ -1,0 +1,66 @@
+---
+# tasks file for apache2_vhost
+- name: Load the OS specific variables
+  tags: 
+    - apache
+    - vhosts
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Ensure document root for website exists
+  tags: 
+    - apache
+    - vhosts
+  file: path={{ vhost.document_root }} state=directory owner={{ vhost.owner|default(apache_vhosts_owner) }} group={{ vhost.group|default(apache_vhosts_group) }}
+
+- name: Ensure log folder for website exists
+  tags: 
+    - apache
+    - vhosts
+  file: path={{ vhost.log_root }} state=directory owner={{ vhost.owner|default(apache_vhosts_owner) }} group={{ vhost.group|default(apache_vhosts_group) }}
+
+- name: Load vhosts configuration files
+  tags: 
+    - apache
+    - vhosts
+  template: src=p15vhost.conf.j2 dest={{ apache_vhosts_conf_dir }}/{{ vhost.config_filename }} backup=yes
+  when: vhost.ssl is not defined
+  notify: 
+    - enable vhost
+    - reload apache
+
+- name: Load vhosts-ssl configuration files
+  tags: 
+    - apache
+    - vhosts
+  template: src=vhost.conf.j2 dest={{ apache_vhosts_conf_dir }}/{{ item.config_filename|default(item.domain + '-ssl.conf') }} backup=yes
+  with_items: vhosts
+  when: vhost.ssl is defined
+  notify: 
+    - enable vhost
+    - reload apache
+
+- name: Place a sample index.html file in the vhost docroot 
+  tags:
+    - apache
+    - vhosts
+  template: src=index.html.j2 dest={{ vhost.document_root }}/index.html force=false owner={{ vhost.owner|default(apache_vhosts_owner) }} group={{ vhost.group|default(apache_vhosts_group) }}
+
+- name: Check if vhost is enabled
+  tags:
+    - apache
+    - vhosts
+  stat: path={{ apache_vhosts_enabled_dir }}/{{ vhost.config_filename }}
+  register: site_enabled
+
+# The vhost SHOULD already be enabled at this point (the 'enable vhost' handler 
+# has already been notified).
+# This is only necessary when this playbook is run on a pre-existing vhost and 
+# the 'Load vhost configuration files' task doesn't run.
+- name: Enable vhost
+  tags:
+    - apache
+    - vhosts
+  command: a2ensite {{ vhost.config_filename }}
+  when: site_enabled.stat.exists == False
+  notify: 
+    - reload apache

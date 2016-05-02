@@ -1,0 +1,6 @@
+apache_service: "apache2"
+apache_vhosts_conf_dir: "/etc/apache2/sites-available"
+apache_vhosts_enabled_dir: "/etc/apache2/sites-enabled"
+apache_vhosts_owner: "vagrant"
+apache_vhosts_group: "vagrant"
+

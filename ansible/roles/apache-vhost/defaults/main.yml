@@ -1,0 +1,10 @@
+---
+# defaults file for apache2_vhost
+apache_ip: "{{ ansible_default_ipv4.address }}"
+apache_ssl_ip: "{{ ansible_default_ipv4.address }}"
+
+apache_port: 80
+apache_ssl_port: 443
+
+apache_vhosts_base_dir: "{% if ansible_os_family == 'Debian' %}/var/www{% else %}/var/www/html{% endif %}"
+

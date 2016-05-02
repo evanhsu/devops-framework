@@ -11,6 +11,6 @@ mydbserver.com ansible_ssh_user=vagrant
 
 # Don't edit below this line!
 
-[production]
+[production:children]
 web
 database

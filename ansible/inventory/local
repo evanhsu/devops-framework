@@ -12,6 +12,6 @@ sql.portonefive.local ansible_ssh_user=root
 
 # Don't edit below this line!
 
-[local]
+[local:children]
 web
 database

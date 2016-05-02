@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+
+<VirtualHost *:80>
+
+        ServerName {{ vhost.domain }}
+        ServerAlias www.{{  vhost.domain }}
+        DocumentRoot {{ vhost.document_root }}
+
+#        <Location />
+#            AuthType Basic
+#            AuthName "{{ vhost.project_name }} Staging"
+#            AuthUserFile /etc/httpd/.htpasswd
+#            Require valid-user portonefive
+#        </Location>
+
+        CustomLog /var/www/vhosts/{{ vhost.domain }}/logs/access.log common
+        ErrorLog /var/www/vhosts/{{ vhost.domain }}/logs/error.log
+
+</VirtualHost>
