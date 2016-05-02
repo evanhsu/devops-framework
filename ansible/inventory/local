@@ -4,11 +4,11 @@
 # These are the settings that will be used to interact with your local Vagrant machine.
 # The base_domain="local" setting means that you will need to add a hosts entry on your
 # local machine for "project_name.local"
-localhost ansible_ssh_user=vagrant
+localhost ansible_user=vagrant ansible_connection=local
 
 [database]
 # This is the address of the database server for this project.
-sql.portonefive.local ansible_ssh_user=root
+sql.portonefive.local ansible_user=root
 
 # Don't edit below this line!
 

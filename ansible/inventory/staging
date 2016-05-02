@@ -2,11 +2,11 @@
 
 [web]
 # This is the address used to SSH into the web server for this project.
-192.168.0.201 ansible_ssh_user=vagrant
+192.168.0.201 ansible_user=vagrant
 
 [database]
 # This is the address of the database server for the production environment.
-192.168.0.201 ansible_ssh_user=vagrant
+192.168.0.201 ansible_user=vagrant
 
 
 # Don't edit below this line!
