@@ -1,0 +1,17 @@
+---
+# group_vars/production.yml
+# These variables apply to the PRODUCTION environment.
+
+# The project name will be used to determine the Git repo name and bamboo build project.
+project_name: exampleproject
+base_domain: mydomain.com 
+
+# You will USUALLY not need to modify the vhost variables as long as the variables above are set.
+vhost:
+  project_name: "{{ project_name }}"
+  domain: "{{ project_name }}.{{ base_domain }}"
+  document_root: "{{ apache_vhosts_base_dir }}/vhosts/{{ project_name }}.{{ base_domain }}/public_html"
+  log_root: "{{ apache_vhosts_base_dir }}/vhosts/{{ project_name }}.{{ base_domain }}/logs"
+  config_filename: "{{ project_name }}.{{ base_domain }}.conf"
+  owner: "vagrant"
+  group: "vagrant"

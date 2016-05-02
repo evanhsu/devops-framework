@@ -1,0 +1,16 @@
+---
+# group_vars/staging.yml
+# These variables apply to the STAGING environment.
+
+project_name: exampleproject4
+base_domain: staging.com 
+
+# You will USUALLY not need to modify the vhost variables as long as the variables above are set.
+vhost:
+  project_name: "{{ project_name }}"
+  domain: "{{ project_name }}.{{ base_domain }}"
+  document_root: "{{ apache_vhosts_base_dir }}/vhosts/{{ project_name }}.{{ base_domain }}/public_html"
+  log_root: "{{ apache_vhosts_base_dir }}/vhosts/{{ project_name }}.{{ base_domain }}/logs"
+  config_filename: "{{ project_name }}.{{ base_domain }}.conf"
+  owner: "vagrant"
+  group: "vagrant"

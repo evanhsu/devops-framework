@@ -1,0 +1,16 @@
+# This is the Inventory for the STAGING environment.
+
+[web]
+# This is the address used to SSH into the web server for this project.
+192.168.0.201 ansible_ssh_user=vagrant
+
+[database]
+# This is the address of the database server.
+mydbserver.com ansible_ssh_user=vagrant  
+
+
+# Don't edit below this line!
+
+[staging]
+web
+database

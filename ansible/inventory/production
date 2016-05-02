@@ -1,0 +1,16 @@
+# This is the Inventory for the PRODUCTION environment.
+
+[web]
+# This is the address used to SSH into the production server for this project.
+mydomain.com ansible_ssh_user=vagrant
+
+[database]
+# This is the address of the database server for the production environment.
+mydbserver.com ansible_ssh_user=vagrant
+
+
+# Don't edit below this line!
+
+[production]
+web
+database

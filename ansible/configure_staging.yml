@@ -1,0 +1,13 @@
+---
+# Playbook: configure_staging.yml
+# Run command:
+#   > ansible-playbook configure_staging -i staging
+#
+# Create or verify existence of an Apache vhost on the
+# staging server (defined in inventory/staging) that matches 
+# the parameters given in 'group_vars/staging.yml'.
+
+- hosts: web
+  sudo: yes
+  roles:
+    - { role: apache-vhost, become: yes }
