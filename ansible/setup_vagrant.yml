@@ -1,0 +1,26 @@
+---
+# Playbook: setup_vagrant.yml
+# Run command:
+#   > ansible-playbook setup_vagrant.yml
+#
+# This will use the 'stack' variable set in group_vars/all.yml to
+# determine which Vagrantfile is most appropriate for this project.
+# The Vagrantfile will be copied into the project root.
+
+- hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    vagrantfile_filename: "{{ stack }}.vagrantfile.j2"
+
+  tasks:
+    - name: Fail if the 'stack' var isn't set
+      fail: msg="The web stack for this project must be defined in group_vars/all.yml"
+      when: stack is undefined
+
+    - name: Fail if the 'vagrantfile_filename' var isn't set
+      fail: msg="No vagrant file is defined for the specified web stack. Check the 'stack' var in group_vars/all.yml"
+      when: vagrantfile_filename is undefined
+
+    - name: Copy Vagrantfile into project root folder
+      template: src=templates/{{ vagrantfile_filename }} dest=../Vagrantfile
